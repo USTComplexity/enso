@@ -22,5 +22,16 @@ def read_t2m(path):
         yield t2m
 
 
-def tseries_1d():
-    pass
+def build_tseries_1d(dataset, lat0, lat1, lon0, lon1):
+    
+    lat0 = lat_to_idx(lat0)
+    lat1 = lat_to_idx(lat1)
+
+    tseries = np.zeros(365 * (2022-1979))
+
+    for i, data in enumerate(dataset):
+        tseries[i*365:(i+1)*365] = np.mean(
+            data[:365, lat1:lat0, lon0:lon1], axis=(1, 2)
+        )
+
+    return tseries
