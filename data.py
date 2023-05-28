@@ -22,6 +22,14 @@ def read_t2m(path):
         yield t2m
 
 
+def read_t2m_mean(path, lat0, lat1, lon0, lon1):
+
+    dataset = read_t2m(path)
+    tseries = build_tseries_1d(dataset, lat0, lat1, lon0, lon1)
+
+    return tseries
+
+
 def build_tseries_1d(dataset, lat0, lat1, lon0, lon1):
     
     lat0 = lat_to_idx(lat0)
