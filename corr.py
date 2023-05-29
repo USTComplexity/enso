@@ -32,4 +32,14 @@ def cross_corr(x, y, period=None, norm=False):
 
         corr /= norm * np.std(x) * np.std(y)
 
-    return corr
+    lags = np.arange(-len(x)+1, len(x))
+
+    return lags, corr
+
+
+def moving_avg(x, n):
+    
+    winodw = np.ones(n) / n
+    ma = np.convolve(x, winodw, mode="same")
+
+    return ma
