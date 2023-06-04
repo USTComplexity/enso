@@ -17,6 +17,9 @@ def seasonal_mean(x, period):
 
 def cross_corr(x, y, period=None, norm=False):
 
+    x = x.copy()
+    y = y.copy()
+
     if period is not None:
         x -= seasonal_mean(x, period)
         y -= seasonal_mean(y, period)
