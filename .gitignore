@@ -3,5 +3,6 @@ hilee/
 venv/
 results/
 figures/
+data/
 
 *.ipynb
