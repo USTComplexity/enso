@@ -3,6 +3,7 @@ import polars as pl
 
 from netCDF4 import Dataset
 from io import StringIO
+from glob import glob
 
 
 def lat_to_idx(lat):
@@ -15,19 +16,27 @@ def lat_to_idx(lat):
     return idx
 
 
-def read_t2m(path):
-    
-    for yr in range(1979, 2022):
-        data = Dataset(f"{path}/2m_temp_{yr}.nc", "r")
-        t2m = data["t2m"][:]
+def read_nc(path, var):
+
+    for fname in sorted(glob(f"{path}/*.nc")):
+        data = Dataset(fname, "r")
+        field = data[var][:]
         data.close()
 
-        yield t2m
+        yield field
+
+
+def read_nc_concat(path, var):
+    
+    data = read_nc(path, var)
+    field = np.concatenate(list(data), axis=0)
+
+    return field
 
 
 def read_t2m_mean(path, lat0, lat1, lon0, lon1):
 
-    dataset = read_t2m(path)
+    dataset = read_nc(path, "t2m")
     tseries = build_tseries_1d(dataset, lat0, lat1, lon0, lon1)
 
     return tseries
