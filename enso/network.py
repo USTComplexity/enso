@@ -20,11 +20,15 @@ def corr_2pt(x: npt.ArrayLike, f: npt.ArrayLike, lag_max: int, lag: int):
     
     c = bn.move_mean(
             a=x[lag_max+1:] * f[lag_max+1 - lag:, :, :],
-            window=365
+            window=365,
+            axis=0
     )
 
-    c -= bn.move_mean(a=x[lag_max+1:], window=365) \
-       * bn.move_mean(a=f[lag_max+1:, :, :], window=365)
+    c -= bn.move_mean(a=x[lag_max+1:], window=365, axis=0) \
+       * bn.move_mean(a=f[lag_max+1:, :, :], window=365, axis=0)
+    
+    c /= bn.move_std(a=x[lag_max+1:], window=365, axis=0) \
+       * bn.move_std(a=f[lag_max+1:, :, :], window=365, axis=0)
 
     return c
 
@@ -36,6 +40,7 @@ def add_edges(edges: list[set], source: tuple[int, int],
 
     for point in txy:
         t, x, y = point
+        print(point)
 
         if (source, (x, y)) in edges[t] or ((x, y), source) in edges[t]:
             continue
@@ -52,7 +57,8 @@ def build_network(f: npt.ArrayLike, lag_max: int, thres: float):
     for i in range(n_x):
         for j in range(n_y):
             
-            cmat = corr_2pt_avg(f[:, i, j], f, lag_max, lag_max)
+            print("Working on", i, j)
+            cmat = corr_2pt_avg(f[:, i, j], f, lag_max)
             add_edges(edges, (i, j), cmat, thres)
     
     return edges
