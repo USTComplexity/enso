@@ -3,32 +3,32 @@ import numpy.typing as npt
 import bottleneck as bn
 
 
-def corr_2pt_avg(x: npt.ArrayLike, f: npt.ArrayLike, lag_max: int):
+def corr_2pt_avg(x: npt.ArrayLike, f: npt.ArrayLike, lag_max: int, window: int):
     
     n_t, n_x, n_y = f.shape
-    c = np.zeros([n_t - lag_max + 1, n_x, n_y])
+    c = np.zeros([n_t - lag_max - 1 - window, n_x, n_y])
 
     for s in range(lag_max + 1):
-        c += corr_2pt(x, f, lag_max, s)
+        c += corr_2pt(x, f, s, lag_max, window)
 
     c /= (lag_max + 1)
 
     return c
 
 
-def corr_2pt(x: npt.ArrayLike, f: npt.ArrayLike, lag_max: int, lag: int):
+def corr_2pt(x: npt.ArrayLike, f: npt.ArrayLike, lag: int, lag_max: int, window: int):
     
-    c = bn.move_mean(
-            a=x[lag_max+1:] * f[lag_max+1 - lag:, :, :],
-            window=365,
-            axis=0
-    )
+    x = x[lag_max+1:, np.newaxis, np.newaxis]
+    f = f[lag_max+1 - lag:, :, :]
+    
+    c = bn.move_mean(a=x*f, window=window, axis=0)
+    print("Here")
 
-    c -= bn.move_mean(a=x[lag_max+1:], window=365, axis=0) \
-       * bn.move_mean(a=f[lag_max+1:, :, :], window=365, axis=0)
+    c -= bn.move_mean(a=x, window=window, axis=0) \
+       * bn.move_mean(a=f, window=window, axis=0)
     
-    c /= bn.move_std(a=x[lag_max+1:], window=365, axis=0) \
-       * bn.move_std(a=f[lag_max+1:, :, :], window=365, axis=0)
+    c /= bn.move_std(a=x, window=window, axis=0) \
+       * bn.move_std(a=f, window=window, axis=0)
 
     return c
 
@@ -48,7 +48,7 @@ def add_edges(edges: list[set], source: tuple[int, int],
         edges[t].append((source, (x, y)))
 
 
-def build_network(f: npt.ArrayLike, lag_max: int, thres: float):
+def build_network(f: npt.ArrayLike, lag_max: int, thres: float, window: int = 365):
 
     n_t, n_x, n_y = f.shape
 
@@ -58,7 +58,7 @@ def build_network(f: npt.ArrayLike, lag_max: int, thres: float):
         for j in range(n_y):
             
             print("Working on", i, j)
-            cmat = corr_2pt_avg(f[:, i, j], f, lag_max)
+            cmat = corr_2pt_avg(f[:, i, j], f, lag_max, window)
             add_edges(edges, (i, j), cmat, thres)
     
     return edges
