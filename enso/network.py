@@ -9,9 +9,14 @@ def corr_2pt_avg(x: npt.ArrayLike, f: npt.ArrayLike, lag_max: int, window: int):
     c = np.zeros([n_t - lag_max - 1 - window, n_x, n_y])
 
     for s in range(lag_max + 1):
-        c += corr_2pt(x, f, s, lag_max, window)[lag_max + window - s:,:,:]
+        c += corr_2pt(x, f, s, lag_max, window)[lag_max + 1 + window - s:,:,:]
 
     c /= (lag_max + 1)
+
+    print(np.mean(c))
+
+    if np.max(c) > 1 or np.min(c) < -1:
+        raise ValueError("Something wrong in the correlation matrix")
 
     return c
 
@@ -19,7 +24,10 @@ def corr_2pt_avg(x: npt.ArrayLike, f: npt.ArrayLike, lag_max: int, window: int):
 def corr_2pt(x: npt.ArrayLike, f: npt.ArrayLike, lag: int, lag_max: int, window: int):
     
     x = x[lag:, np.newaxis, np.newaxis]
-    f = f[:-lag, :, :]
+
+    # Edge case: 
+    if lag != 0:
+        f = f[:-lag, :, :]
     
     print(x.shape)
     print(f.shape)
@@ -43,12 +51,12 @@ def add_edges(edges: list[set], source: tuple[int, int],
 
     for point in txy:
         t, x, y = point
-        print(point)
+        # print(point)
 
         if (source, (x, y)) in edges[t] or ((x, y), source) in edges[t]:
             continue
         
-        edges[t].append((source, (x, y)))
+        edges[t].add((source, (x, y)))
 
 
 def build_network(f: npt.ArrayLike, lag_max: int, thres: float, window: int = 365):
