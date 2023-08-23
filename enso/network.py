@@ -9,7 +9,7 @@ def corr_2pt_avg(x: npt.ArrayLike, f: npt.ArrayLike, lag_max: int, window: int):
     c = np.zeros([n_t - lag_max - 1 - window, n_x, n_y])
 
     for s in range(lag_max + 1):
-        c += corr_2pt(x, f, s, lag_max, window)
+        c += corr_2pt(x, f, s, lag_max, window)[lag_max + window - s:,:,:]
 
     c /= (lag_max + 1)
 
@@ -18,9 +18,12 @@ def corr_2pt_avg(x: npt.ArrayLike, f: npt.ArrayLike, lag_max: int, window: int):
 
 def corr_2pt(x: npt.ArrayLike, f: npt.ArrayLike, lag: int, lag_max: int, window: int):
     
-    x = x[lag_max+1:, np.newaxis, np.newaxis]
-    f = f[lag_max+1 - lag:, :, :]
+    x = x[lag:, np.newaxis, np.newaxis]
+    f = f[:-lag, :, :]
     
+    print(x.shape)
+    print(f.shape)
+
     c = bn.move_mean(a=x*f, window=window, axis=0)
     print("Here")
 
