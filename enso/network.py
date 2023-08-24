@@ -13,7 +13,7 @@ def corr_2pt_avg(x: npt.ArrayLike, f: npt.ArrayLike, lag_max: int, window: int):
 
     c /= (lag_max + 1)
 
-    print(np.mean(c))
+    print(np.mean(np.abs(c)))
 
     if np.max(c) > 1 or np.min(c) < -1:
         raise ValueError("Something wrong in the correlation matrix")
@@ -29,11 +29,8 @@ def corr_2pt(x: npt.ArrayLike, f: npt.ArrayLike, lag: int, lag_max: int, window:
     if lag != 0:
         f = f[:-lag, :, :]
     
-    print(x.shape)
-    print(f.shape)
-
     c = bn.move_mean(a=x*f, window=window, axis=0)
-    print("Here")
+    # print("Here")
 
     c -= bn.move_mean(a=x, window=window, axis=0) \
        * bn.move_mean(a=f, window=window, axis=0)

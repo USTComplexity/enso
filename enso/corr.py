@@ -7,12 +7,13 @@ def seasonal_mean(x, period):
         raise ValueError("x has non-integer multiple of periods.")
 
     n = len(x) // period
-    
-    folded = x.reshape(n, period)
-    mean = np.mean(folded, axis=0)
-    mean_tiled = np.tile(mean, n)
+    dim = len(x.shape)
 
-    return mean_tiled
+    folded = np.array(np.vsplit(x, n))
+    mean = np.mean(folded, axis=0)
+    mean = np.tile(mean, [n] + [1 for _ in range(dim - 1)])
+
+    return mean
 
 
 def cross_corr(x, y, period=None, norm=True):
