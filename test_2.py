@@ -2,7 +2,7 @@ import numpy as np
 import pickle
 
 from netCDF4 import Dataset
-from enso.network import build_network
+from enso.network import build_network2
 
 
 fname = "./data/t2m/2m_temp_corrected.nc"
@@ -19,8 +19,8 @@ mean = np.tile(mean, (43, 1, 1))
 t2m -= mean
 
 
-edges = build_network(t2m, 20, 0.5)
+s = build_network2(t2m, 200)
 
 
-with open("sample2.pkl", "wb") as f:
-    pickle.dump(edges, f)
+with open("sample3.pkl", "wb") as f:
+    pickle.dump(s, f)
