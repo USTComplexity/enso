@@ -34,12 +34,14 @@ def str_2pt(x: npt.ArrayLike, f: npt.ArrayLike, lag_max: int, window: int):
 
         c += c_s
         c2 += c_s * c_s
-        c_max = np.maximum(c_max, c)
+        c_max = np.maximum(c_max, c_s)
 
     c /= (lag_max + 1)
     c2 = c2 / (lag_max + 1) - c * c
 
-    return (c_max - c) / c2
+    print(np.max(c), np.max(np.sqrt(c2)), np.max(c_max))
+
+    return (c_max - c) / np.sqrt(c2)
 
 
 def corr_2pt(x: npt.ArrayLike, f: npt.ArrayLike, lag: int, window: int):
@@ -71,7 +73,6 @@ def cov_2pt(x: npt.ArrayLike, f: npt.ArrayLike, lag: int, window: int):
         f = f[:-lag, :, :]
     
     c = bn.move_mean(a=x*f, window=window, axis=0)
-    # print("Here")
 
     c -= bn.move_mean(a=x, window=window, axis=0) \
        * bn.move_mean(a=f, window=window, axis=0)
@@ -123,5 +124,6 @@ def build_network2(f: npt.ArrayLike, lag_max: int, window: int = 365):
             print("Working on", i, j)
             sij = str_2pt(f[:, i, j], f, lag_max, window)
             s += np.mean(sij, axis=(1, 2))
-    
+
+    s /= n_x * n_y 
     return s
