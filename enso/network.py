@@ -123,7 +123,7 @@ def build_network2(f: npt.ArrayLike, lag_max: int, window: int = 365):
             
             print("Working on", i, j)
             sij = str_2pt(f[:, i, j], f, lag_max, window)
-            s += np.mean(sij, axis=(1, 2))
+            s += np.nanmean(sij, axis=(1, 2))
 
     s /= n_x * n_y 
     return s
