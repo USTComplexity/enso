@@ -3,11 +3,11 @@ hilee/
 venv/
 results/
 figures/
-data/
+data/t2m
+data/sst
 
 *.ipynb
 
 !1_nino34.ipynb
 !2_network.ipynb
 !3_pnas_replication.ipynb
-!data/nino34/*
