@@ -5,6 +5,7 @@ results/
 figures/
 data/t2m
 data/sst
+raw/
 
 *.ipynb
 
