@@ -6,6 +6,7 @@ data/t2m
 data/sst
 raw/
 
+*.png
 *.ipynb
 
 !1_nino34.ipynb
