@@ -5,11 +5,11 @@ from netCDF4 import Dataset
 from enso.network import build_network2
 
 
-fname = "./data/sst/sst_corrected.nc"
+# fname = "./2m_temp_corrected.nc"
+fname = "./data/t2m/2m_temp_corrected.nc"
 dataset = Dataset(fname, "r")
 
-# t2m = dataset["t2m"][:, 60:120:5, 180:260:5]
-t2m = dataset["sst"][:, 60:121:5, 180:301:5]
+t2m = dataset["t2m"][:, 60:120:5, 180:260:5]
 print(t2m.shape)
 
 # Remove seasonal mean
@@ -23,5 +23,5 @@ t2m -= mean
 s = build_network2(t2m, 5)
 
 
-with open("sst.pkl", "wb") as f:
+with open("network.pkl", "wb") as f:
     pickle.dump(s, f)

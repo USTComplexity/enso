@@ -4,6 +4,9 @@ import bottleneck as bn
 
 
 def corr_2pt_avg(x: npt.ArrayLike, f: npt.ArrayLike, lag_max: int, window: int):
+    """
+    Compute 2-point correlation matrix averaged all time lag up to lag_max
+    """
     
     n_t, n_x, n_y = f.shape
     c = np.zeros([n_t - lag_max - 1 - window, n_x, n_y])
@@ -23,7 +26,10 @@ def corr_2pt_avg(x: npt.ArrayLike, f: npt.ArrayLike, lag_max: int, window: int):
 
 
 def str_2pt(x: npt.ArrayLike, f: npt.ArrayLike, lag_max: int, window: int):
-    
+    """
+    Compute network strength as defined by Ludescher et al., PNAS 110, 29, 11743 (2013)
+    """
+
     n_t, n_x, n_y = f.shape
     c = np.zeros([n_t - lag_max - 1 - window, n_x, n_y])
     c2 = np.zeros([n_t - lag_max - 1 - window, n_x, n_y])
@@ -45,6 +51,9 @@ def str_2pt(x: npt.ArrayLike, f: npt.ArrayLike, lag_max: int, window: int):
 
 
 def corr_2pt(x: npt.ArrayLike, f: npt.ArrayLike, lag: int, window: int):
+    """
+    Compute 2-point correlation at specific time lag by a moving average
+    """
     
     x = x[lag:, np.newaxis, np.newaxis]
 
@@ -65,6 +74,9 @@ def corr_2pt(x: npt.ArrayLike, f: npt.ArrayLike, lag: int, window: int):
 
 
 def cov_2pt(x: npt.ArrayLike, f: npt.ArrayLike, lag: int, window: int):
+    """
+    Compute 2-point covariance at specific time lag by a moving average
+    """
     
     x = x[lag:, np.newaxis, np.newaxis]
 
@@ -82,7 +94,14 @@ def cov_2pt(x: npt.ArrayLike, f: npt.ArrayLike, lag: int, window: int):
 
 def add_edges(edges: list[set], source: tuple[int, int], 
               cmat: npt.ArrayLike, thres: float):
-    
+    """
+    Add edge by determining whether any connection comming out of the source
+    node (specified by lat, lon indices) has exceeded the specified threshold
+
+    This will generate a list of time-dependent edges like
+        time, (x_1, y_2), (x_2, y_2)
+    """
+
     txy = np.argwhere(np.abs(cmat) >= thres)
 
     for point in txy:
@@ -97,6 +116,10 @@ def add_edges(edges: list[set], source: tuple[int, int],
 
 
 def build_network(f: npt.ArrayLike, lag_max: int, thres: float, window: int = 365):
+    """
+    Build time-dependent correlation network by add edge for each pair-correlation
+    that excess the threshold 
+    """
 
     n_t, n_x, n_y = f.shape
 
@@ -113,6 +136,10 @@ def build_network(f: npt.ArrayLike, lag_max: int, thres: float, window: int = 36
 
 
 def build_network2(f: npt.ArrayLike, lag_max: int, window: int = 365):
+    """
+    Build network based on the original methodology from 
+    Ludescher et al., PNAS 110, 29, 11743 (2013)
+    """
 
     n_t, n_x, n_y = f.shape
 
