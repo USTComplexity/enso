@@ -135,7 +135,7 @@ def build_network(f: npt.ArrayLike, lag_max: int, thres: float, window: int = 36
     return edges
 
 
-def build_network2(f: npt.ArrayLike, lag_max: int, window: int = 365):
+def build_network_pnas(f: npt.ArrayLike, lag_max: int, window: int = 365):
     """
     Build network based on the original methodology from 
     Ludescher et al., PNAS 110, 29, 11743 (2013)
